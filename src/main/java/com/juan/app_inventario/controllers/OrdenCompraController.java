@@ -2,6 +2,7 @@ package com.juan.app_inventario.controllers;
 
 import com.juan.app_inventario.models.OrdenCompra;
 import com.juan.app_inventario.services.OrdenCompraService;
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,35 +17,36 @@ public class OrdenCompraController {
     @Autowired
     private OrdenCompraService ordenCompraService;
 
-    // Obtener todas las órdenes de compra
-    @GetMapping
-    public List<OrdenCompra> obtenerTodas() {
-        return ordenCompraService.obtenerTodas();
-    }
-
-    // Crear una nueva orden de compra
-    @PostMapping
-    public ResponseEntity<OrdenCompra> crear(@Valid @RequestBody OrdenCompra ordenCompra) {
-        OrdenCompra nuevaOrdenCompra = ordenCompraService.crear(ordenCompra);
-        return ResponseEntity.status(201).body(nuevaOrdenCompra);
+    //Cambiar estado orden de compra
+    @PatchMapping("/estado/{id}")
+    public ResponseEntity<OrdenCompra> cambiarEstado(@PathVariable Long id, @RequestParam String nuevoEstado) {
+        OrdenCompra ordenCompraActualizada = ordenCompraService.cambiarEstado(id, nuevoEstado);
+        return ResponseEntity.ok(ordenCompraActualizada);
     }
 
     // Actualizar una orden de compra existente
-    @PutMapping("/{id}")
+    @PutMapping("/actualizar/{id}")
     public ResponseEntity<OrdenCompra> actualizar(@PathVariable Long id, @Valid @RequestBody OrdenCompra ordenCompra) {
         OrdenCompra ordenCompraActualizada = ordenCompraService.actualizar(id, ordenCompra);
         return ResponseEntity.ok(ordenCompraActualizada);
     }
 
+    // Crear una nueva orden de compra
+    @PostMapping("/create")
+    public ResponseEntity<OrdenCompra> crear(@Valid @RequestBody OrdenCompra ordenCompra) {
+        OrdenCompra nuevaOrdenCompra = ordenCompraService.crear(ordenCompra);
+        return ResponseEntity.status(201).body(nuevaOrdenCompra);
+    }
+
     // Eliminar una orden de compra
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         ordenCompraService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 
     // Obtener una orden de compra por ID
-    @GetMapping("/{id}")
+    @GetMapping("/getById/{id}")
     public ResponseEntity<OrdenCompra> obtenerPorId(@PathVariable Long id) {
         OrdenCompra ordenCompra = ordenCompraService.obtenerPorId(id);
         return ResponseEntity.ok(ordenCompra);
@@ -65,18 +67,17 @@ public class OrdenCompraController {
         return ordenCompraService.obtenerPorProveedor(proveedorId);
     }
 
-    //Cambiar estado orden de compra
-    @PatchMapping("/{id}/estado")
-    public ResponseEntity<OrdenCompra> cambiarEstado(@PathVariable Long id, @RequestParam String nuevoEstado) {
-        OrdenCompra ordenCompraActualizada = ordenCompraService.cambiarEstado(id, nuevoEstado);
-        return ResponseEntity.ok(ordenCompraActualizada);
+    //Buscar por fecha particular
+    @GetMapping("/buscarPorFecha")
+    public List<OrdenCompra> buscarFechaParticular(
+            @RequestParam LocalDate fecha) {
+        return ordenCompraService.buscarFechaParticular(fecha);
     }
 
-    //Buscar por fecha particular
-    @GetMapping("/buscar")
-    public List<OrdenCompra> buscarFechaParticular(
-            @RequestParam(required = false) String fecha) {
-        return ordenCompraService.buscarFechaParticular(fecha);
+    // Obtener todas las órdenes de compra
+    @GetMapping("/getAll")
+    public List<OrdenCompra> obtenerTodas() {
+        return ordenCompraService.obtenerTodas();
     }
 
 }

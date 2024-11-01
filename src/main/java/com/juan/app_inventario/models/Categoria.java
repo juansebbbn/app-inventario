@@ -1,13 +1,9 @@
 package com.juan.app_inventario.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "categorias")
@@ -15,17 +11,18 @@ public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long categoria_id;
 
     @NotBlank(message = "El nombre de la categoría es obligatorio")
     private String nombre;
 
     private String descripcion;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    //relaciones
+    
+    @NotNull(message = "Las productos son obligatorias")
+    @ManyToMany(mappedBy = "categorias", cascade = CascadeType.ALL)
     private List<Producto> productos;
-
-    // Constructores, getters y setters
 
     public Categoria() {
         // Constructor vacío requerido por JPA
@@ -36,14 +33,8 @@ public class Categoria {
         this.descripcion = descripcion;
     }
 
-    // Getters y Setters
-
     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return categoria_id;
     }
 
     public String getNombre() {
@@ -69,4 +60,5 @@ public class Categoria {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
+    
 }

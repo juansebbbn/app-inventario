@@ -1,16 +1,10 @@
 package com.juan.app_inventario.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ordenes_compra")
@@ -18,12 +12,7 @@ public class OrdenCompra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull(message = "El proveedor es obligatorio")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "proveedor_id")
-    private Proveedor proveedor;
+    private Long orden_compra_id;
 
     @NotNull(message = "La fecha de la orden es obligatoria")
     private LocalDate fechaOrden;
@@ -31,37 +20,31 @@ public class OrdenCompra {
     @NotBlank(message = "El estado de la orden es obligatorio")
     private String estado; // Ej. "PENDIENTE", "COMPLETADA", "CANCELADA"
 
-    @OneToMany(mappedBy = "ordenCompra", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Producto> productos;
+    //relaciones
+    
+    @NotNull(message = "El proveedor es obligatorio")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proveedor_id")
+    private Proveedor proveedor;
 
-    // Constructores, getters y setters
+    @NotNull(message = "Los productos son obligatorios")
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id")
+    private List<Producto> productos;
 
     public OrdenCompra() {
         // Constructor vacío requerido por JPA
     }
 
-    public OrdenCompra(Proveedor proveedor, LocalDate fechaOrden, String estado) {
-        this.proveedor = proveedor;
+    public OrdenCompra(LocalDate fechaOrden, String estado, Proveedor proveedor, List<Producto> productos) {
         this.fechaOrden = fechaOrden;
         this.estado = estado;
-    }
-
-    // Getters y Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Proveedor getProveedor() {
-        return proveedor;
-    }
-
-    public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
+        this.productos = productos;
+    }
+
+    public Long getOrden_compra_id() {
+        return orden_compra_id;
     }
 
     public LocalDate getFechaOrden() {
@@ -80,6 +63,14 @@ public class OrdenCompra {
         this.estado = estado;
     }
 
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
     public List<Producto> getProductos() {
         return productos;
     }
@@ -88,11 +79,4 @@ public class OrdenCompra {
         this.productos = productos;
     }
 
-    public BigDecimal calcularTotal() {
-        BigDecimal total = BigDecimal.ZERO;
-        for (Producto producto : productos) {
-            total = total.add(producto.getPrecio().multiply(BigDecimal.valueOf(producto.getCantidadEnStock())));
-        }
-        return total;
-    }
 }

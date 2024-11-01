@@ -1,30 +1,25 @@
 package com.juan.app_inventario.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "proveedores")
-public class Proveedor {
+public class Proveedor { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_proveedor;
 
     @NotBlank(message = "El nombre del proveedor es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "La dirección es obligatoria")
-    private String direccion;
+    @NotBlank(message = "La ciudad es obligatoria")
+    private String ciudad;
 
     @NotNull(message = "El teléfono es obligatorio")
     @Positive(message = "El teléfono debe ser un número positivo")
@@ -33,30 +28,25 @@ public class Proveedor {
     @Email(message = "Correo electrónico debe ser válido")
     private String correoElectronico;
 
-    @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, orphanRemoval = true)
+    //relaciones
+    
+    @ManyToMany(mappedBy = "proveedores", cascade = CascadeType.ALL)
     private List<Producto> productos;
-
-    // Constructores, getters y setters
 
     public Proveedor() {
         // Constructor vacío requerido por JPA
     }
 
-    public Proveedor(String nombre, String direccion, String telefono, String correoElectronico) {
+    public Proveedor(String nombre, String ciudad, String telefono, String correoElectronico, List<Producto> productos) {
         this.nombre = nombre;
-        this.direccion = direccion;
+        this.ciudad = ciudad;
         this.telefono = telefono;
         this.correoElectronico = correoElectronico;
+        this.productos = productos;
     }
 
-    // Getters y Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId_proveedor() {
+        return id_proveedor;
     }
 
     public String getNombre() {
@@ -67,12 +57,12 @@ public class Proveedor {
         this.nombre = nombre;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public String getCiudad() {
+        return ciudad;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
     }
 
     public String getTelefono() {
@@ -98,4 +88,5 @@ public class Proveedor {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
+
 }

@@ -33,7 +33,7 @@ public class ProductoService {
         Producto prod = prodRep.getReferenceById(id);
 
         prod.setCantidadEnStock(productoAct.getCantidadEnStock());
-        prod.setCategoria(productoAct.getCategoria());
+        prod.setCategorias(productoAct.getCategorias());
         prod.setDescripcion(productoAct.getDescripcion());
         prod.setFechaIngreso(productoAct.getFechaIngreso());
         prod.setNombre(productoAct.getNombre());
@@ -46,8 +46,8 @@ public class ProductoService {
         prodRep.deleteById(id);
     }
 
-    public List<Producto> obtenerPorCategoria(String categoria) {
-        return prodRep.getProductosPorCategoria();
+    public List<Producto> obtenerPorCategoria(Long id_cat) {
+        return prodRep.findByCategoria(id_cat);
     }
 
     public List<Producto> obtenerPorRangoPrecio(Double precioMinimo, Double precioMaximo) {
@@ -59,7 +59,7 @@ public class ProductoService {
     }
 
     public List<Producto> buscarPorNombre(String nombre) {
-        return prodRep.buscarPorNombre(nombre);
+        return prodRep.findByNombre(nombre);
     }
 
     public Producto actualizarCantidad(Long id, int cantidad) {
@@ -70,8 +70,8 @@ public class ProductoService {
         return prodRep.save(prod);
     }
 
-    public void registrarMovmiento(MovimientoInventario mov) {
-        movRep.save(mov);
+    public MovimientoInventario registrarMovimiento(MovimientoInventario mov) {
+        return movRep.save(mov);
     }
 
     public List<MovimientoInventario> registrarMovimientos(List<MovimientoInventario> movimientos) {

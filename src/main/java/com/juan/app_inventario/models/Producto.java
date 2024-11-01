@@ -1,16 +1,12 @@
 package com.juan.app_inventario.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "productos")
@@ -33,35 +29,43 @@ public class Producto {
     @Positive(message = "La cantidad en stock debe ser un número positivo")
     private int cantidadEnStock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
-
+    @NotNull(message = "La fecha es obligatoria")
     private LocalDate fechaIngreso;
 
-    // Constructores, getters y setters
+    //relaciones
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "producto_proveedores", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "producto_id"), // Columna de la tabla Producto
+            inverseJoinColumns = @JoinColumn(name = "id_proveedor") // Columna de la tabla Categoria
+    )
+    private List<Proveedor> proveedores;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "producto_categoria", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "producto_id"), // Columna de la tabla Producto
+            inverseJoinColumns = @JoinColumn(name = "categoria_id") // Columna de la tabla Categoria
+    )
+    private List<Categoria> categorias;
 
     public Producto() {
         // Constructor vacío requerido por JPA
     }
 
-    public Producto(String nombre, String descripcion, BigDecimal precio, int cantidadEnStock, Categoria categoria, LocalDate fechaIngreso) {
+    public Producto(String nombre, String descripcion, BigDecimal precio, int cantidadEnStock, LocalDate fechaIngreso, List<Proveedor> proveedores, List<Categoria> categorias) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.cantidadEnStock = cantidadEnStock;
-        this.categoria = categoria;
         this.fechaIngreso = fechaIngreso;
+        this.proveedores = proveedores;
+        this.categorias = categorias;
     }
-
-    // Getters y Setters
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNombre() {
@@ -96,14 +100,6 @@ public class Producto {
         this.cantidadEnStock = cantidadEnStock;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
-
     public LocalDate getFechaIngreso() {
         return fechaIngreso;
     }
@@ -111,4 +107,21 @@ public class Producto {
     public void setFechaIngreso(LocalDate fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
+
+    public List<Proveedor> getProveedores() {
+        return proveedores;
+    }
+
+    public void setProveedores(List<Proveedor> proveedores) {
+        this.proveedores = proveedores;
+    }
+
+    public List<Categoria> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<Categoria> categorias) {
+        this.categorias = categorias;
+    }
+
 }

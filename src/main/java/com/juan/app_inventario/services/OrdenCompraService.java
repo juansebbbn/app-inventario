@@ -2,6 +2,7 @@ package com.juan.app_inventario.services;
 
 import com.juan.app_inventario.models.OrdenCompra;
 import com.juan.app_inventario.repositories.OrdenDeCompraRep;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,8 +56,8 @@ public class OrdenCompraService {
         return ordenRep.save(orden);
     }
     
-    public List<OrdenCompra> buscarFechaParticular(String fecha) {
-        return ordenRep.getPorFechaParticular(fecha);
+    public List<OrdenCompra> buscarFechaParticular(LocalDate fecha) {
+        return ordenRep.findByfechaOrden(fecha);
     }
     
 }
